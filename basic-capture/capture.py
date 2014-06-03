@@ -1,4 +1,13 @@
 import cv
-capture = cv.CaptureFromCAM(0)
-img = cv.QueryFrame(capture)
-cv.SaveImage("capture.png", img)
+import sys
+
+def main():
+	frame = cv.CaptureFromCAM(0)
+	print 'Captured'
+	img = cv.QueryFrame(frame)
+	print 'Queried'
+	cv.SaveImage("capture.png", img)
+	print 'Saved'
+
+if __name__ == "__main__":
+    main()
