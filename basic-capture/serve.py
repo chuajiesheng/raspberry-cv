@@ -3,6 +3,10 @@ import SimpleHTTPServer
 import SocketServer
 from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
 from os import curdir, sep
+import cv
+import cv2
+import sys
+from numpy import *
 
 PORT_NUMBER = 8080
 
@@ -12,28 +16,24 @@ class myHandler(BaseHTTPRequestHandler):
     #Handler for the GET requests
     def do_GET(self):
         try:
-            #Check the file extension required and
-            #set the right mime type
+            mimetype='image/png'
+            self.send_response(200)
+            self.send_header('Content-type',mimetype)
+            self.end_headers()
+            
+            frame = cv.CaptureFromCAM(0)
+            print 'Captured'
+            img = cv.QueryFrame(frame)
 
-            print 'Serve:', self.path
+            #(retval, buf) = cv2.imencode('.png', img)
+            #self.wfile.write(buf)
 
-            sendReply = False
-            if self.path.endswith(".png"):
-                mimetype='image/png'
-                sendReply = True
+            cv.SaveImage("capture.png", img)
+            file = '/home/exer/workspace/raspberry-cv/basic-capture' + sep + 'capture.png'
+            f = open(file)
+            self.wfile.write(f.read())
+            f.close()
 
-            if sendReply == True:
-                #Open the static file requested and send it
-
-                file = '/home/exer/workspace/raspberry-cv/basic-capture' + sep + self.path
-                print 'Serve', file
-
-                self.send_response(200)
-                self.send_header('Content-type',mimetype)
-                self.end_headers()
-                f = open(file)
-                self.wfile.write(f.read())
-                f.close()
             return
 
 
